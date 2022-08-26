@@ -4,7 +4,6 @@
 ################## vars ##################
 ##########################################
 
-mgmt_cluster=mgmt
 cluster=tap-c3
 export tap_namespace=dev
 
@@ -82,11 +81,7 @@ fi
 
 echo "starting installation"
 
-### patch mgmt cluster ###
-
-kubectl config use-context $mgmt_cluster"-admin@"$mgmt_cluster
-
-kubectl patch "app/"$cluster"-kapp-controller" -n kapp-controller -p '{"spec":{"paused":true}}' --type=merge
+### context ###
 
 kubectl config use-context $cluster"-admin@"$cluster
 
@@ -140,21 +135,18 @@ cd ..
 ### cluster prep ###
 
 kubectl create ns tap-install
+#kubectl delete deployment kapp-controller -n tkg-system
+#kubectl apply -f https://github.com/vmware-tanzu/carvel-kapp-controller/releases/download/v0.29.0/release.yml
 
-kubectl delete deployment kapp-controller -n tkg-system
-kubectl apply -f https://github.com/vmware-tanzu/carvel-kapp-controller/releases/download/v0.29.0/release.yml
-
-kubectl create ns secretgen-controller
-kubectl apply -f https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/latest/download/release.yml
+#kubectl create ns secretgen-controller
+#kubectl apply -f https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/latest/download/release.yml
 
 #kapp deploy -y -a sg -f https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/download/v0.6.0/release.yml
-
 
 
 #### RBAC ####
 wget -N https://raw.githubusercontent.com/assafsauer/aws-tkg-automation/master/tap/template/serviceacount.yml
 kubectl apply -f serviceacount.yml -n $tap_namespace
-
 
 
 ################## Secrets ##################
@@ -195,7 +187,7 @@ tanzu secret registry add harbor-registry -y \
  --export-to-all-namespaces --yes --namespace tap-install
 
 
-### temp workaround for the "ServiceAccountSecretError" issue
+### temp workaround for the "ServiceAccountSecretError" issue ###
 kubectl create secret docker-registry registry-credentials --docker-server=${HARBOR_DOMAIN} --docker-username=${HARBOR_USER} --docker-password=${HARBOR_PWD} -n tap-install 
 
 kubectl create secret docker-registry registry-credentials --docker-server=${HARBOR_DOMAIN} --docker-username=${HARBOR_USER} --docker-password=${HARBOR_PWD} -n $tap_namespace
