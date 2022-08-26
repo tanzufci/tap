@@ -22,11 +22,9 @@ tap_gui:
   service_type: LoadBalancer
      
 contour:
-  infrastructure_provider: aws
   envoy:
     service:
-      aws:
-        LBType: nlb     
+      type: LoadBalancer   
 
 metadata_store:
   ns_for_export_app_cert: $tap_namespace
