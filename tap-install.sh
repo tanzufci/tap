@@ -88,6 +88,7 @@ kubectl config use-context $cluster"-admin@"$cluster
 kubectl create clusterrolebinding default-tkg-admin-privileged-binding --clusterrole=psp:vmware-system-privileged
 
 kubectl create ns $tap_namespace
+kubectl create ns tap-install
 
 ### create storageclass ###
 
@@ -134,7 +135,6 @@ cd ..
 
 ### cluster prep ###
 
-kubectl create ns tap-install
 #kubectl delete deployment kapp-controller -n tkg-system
 #kubectl apply -f https://github.com/vmware-tanzu/carvel-kapp-controller/releases/download/v0.29.0/release.yml
 
