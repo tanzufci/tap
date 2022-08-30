@@ -198,7 +198,7 @@ kubectl create secret docker-registry harbor-registry --docker-server=${HARBOR_D
 echo "your harbor cred"
 kubectl get secret registry-credentials --output="jsonpath={.data.\.dockerconfigjson}" | base64 --decode
 
-wget -N https://raw.githubusercontent.com/assafsauer/aws-tkg-automation/master/tap/template/tap-values.yaml 
+wget -N https://raw.githubusercontent.com/tanzufci/tap/main/tamplate/tap-values.yaml 
 envsubst < tap-values.yaml > tap-base-final.yml
 
 tanzu package repository add tanzu-tap-repository \
@@ -238,7 +238,7 @@ ip=$(nslookup $ingress |grep Address |grep -v 127 | awk '{print $2}')
 echo "########## please update your DNS as follow: ###########"
 echo *app.$domain "pointing to" $ip
 
-wget -N https://raw.githubusercontent.com/assafsauer/aws-tkg-automation/master/tap/template/tap-values-gui.yaml
+wget -N https://raw.githubusercontent.com/tanzufci/tap/main/tamplate/tap-values-gui.yaml
 envsubst < tap-values-gui.yaml > tap-gui-final-val.yml
 tanzu package installed update --install tap -p tap.tanzu.vmware.com -v $tap_version -n tap-install --poll-timeout 30m -f tap-gui-final-val.yml 
 
@@ -249,13 +249,13 @@ if [ "$REPLY" != "yes" ]; then
 fi
 
 #### scan and tests #####
-wget -N https://raw.githubusercontent.com/assafsauer/aws-tkg-automation/master/tap/template/scanpolicy.yml
+wget -N https://raw.githubusercontent.com/tanzufci/tap/main/tamplate/scanpolicy.yml
 kubectl apply -f scanpolicy.yml -n $tap_namespace
 
-wget -N https://raw.githubusercontent.com/assafsauer/aws-tkg-automation/master/tap/template/tekton.yml
+wget -N https://raw.githubusercontent.com/tanzufci/tap/main/tamplate/tekton.yml
 kubectl apply -f tekton.yml -n $tap_namespace
 
-wget -N https://raw.githubusercontent.com/assafsauer/aws-tkg-automation/master/tap/template/tap-test-scan.yml
+wget -N https://raw.githubusercontent.com/tanzufci/tap/main/tamplate/tap-test-scan.yml
 envsubst < tap-test-scan.yml > tap-test-scan.yaml
 tanzu package installed update --install tap -p tap.tanzu.vmware.com -v $tap_version -n tap-install --poll-timeout 30m -f tap-test-scan.yaml 
 
